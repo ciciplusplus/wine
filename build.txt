@@ -1,0 +1,7 @@
+../configure --with-wine64=../wine64-build
+PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig ../configure --with-wine64=../wine64-build LDFLAGS="-L/home/antonc27/deltaruNES/SDL2X11Emulation/build"
+
+
+export LD_LIBRARY_PATH=/home/antonc27/deltaruNES/SDL2X11Emulation/build:$LD_LIBRARY_PATH
+
+../configure --enable-win64

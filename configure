@@ -11396,13 +11396,13 @@ then
     ac_save_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for -lX11" >&5
-$as_echo_n "checking for -lX11... " >&6; }
-if ${ac_cv_lib_soname_X11+:} false; then :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for -lsdl2X11Emulation" >&5
+$as_echo_n "checking for -lsdl2X11Emulation... " >&6; }
+if ${ac_cv_lib_soname_sdl2X11Emulation+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_soname_save_LIBS=$LIBS
-LIBS="-lX11 $X_LIBS $X_EXTRA_LIBS $LIBS"
+LIBS="-lsdl2X11Emulation $X_LIBS $X_EXTRA_LIBS $LIBS"
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -11423,30 +11423,30 @@ return XCreateWindow ();
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
   case "$LIBEXT" in
-    dll) ac_cv_lib_soname_X11=`$ac_cv_path_LDD conftest.exe | grep "X11" | sed -e "s/dll.*/dll/"';2,$d'` ;;
-    dylib) ac_cv_lib_soname_X11=`$OTOOL -L conftest$ac_exeext | grep "libX11\\.[0-9A-Za-z.]*dylib" | sed -e "s/^.*\/\(libX11\.[0-9A-Za-z.]*dylib\).*$/\1/"';2,$d'` ;;
-    *) ac_cv_lib_soname_X11=`$READELF -d conftest$ac_exeext | grep "NEEDED.*libX11\\.$LIBEXT" | sed -e "s/^.*\\[\\(libX11\\.$LIBEXT[^	 ]*\\)\\].*$/\1/"';2,$d'`
-       if ${ac_cv_lib_soname_X11:+false} :; then :
-  ac_cv_lib_soname_X11=`$LDD conftest$ac_exeext | grep "libX11\\.$LIBEXT" | sed -e "s/^.*\(libX11\.$LIBEXT[^	 ]*\).*$/\1/"';2,$d'`
+    dll) ac_cv_lib_soname_sdl2X11Emulation=`$ac_cv_path_LDD conftest.exe | grep "sdl2X11Emulation" | sed -e "s/dll.*/dll/"';2,$d'` ;;
+    dylib) ac_cv_lib_soname_sdl2X11Emulation=`$OTOOL -L conftest$ac_exeext | grep "libsdl2X11Emulation\\.[0-9A-Za-z.]*dylib" | sed -e "s/^.*\/\(libsdl2X11Emulation\.[0-9A-Za-z.]*dylib\).*$/\1/"';2,$d'` ;;
+    *) ac_cv_lib_soname_sdl2X11Emulation=`$READELF -d conftest$ac_exeext | grep "NEEDED.*libsdl2X11Emulation\\.$LIBEXT" | sed -e "s/^.*\\[\\(libsdl2X11Emulation\\.$LIBEXT[^	 ]*\\)\\].*$/\1/"';2,$d'`
+       if ${ac_cv_lib_soname_sdl2X11Emulation:+false} :; then :
+  ac_cv_lib_soname_sdl2X11Emulation=`$LDD conftest$ac_exeext | grep "libsdl2X11Emulation\\.$LIBEXT" | sed -e "s/^.*\(libsdl2X11Emulation\.$LIBEXT[^	 ]*\).*$/\1/"';2,$d'`
 fi ;;
   esac
 else
-  ac_cv_lib_soname_X11=
+  ac_cv_lib_soname_sdl2X11Emulation=
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
   LIBS=$ac_check_soname_save_LIBS
 fi
-if ${ac_cv_lib_soname_X11:+false} :; then :
+if ${ac_cv_lib_soname_sdl2X11Emulation:+false} :; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
 $as_echo "not found" >&6; }
 
 else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_soname_X11" >&5
-$as_echo "$ac_cv_lib_soname_X11" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_soname_sdl2X11Emulation" >&5
+$as_echo "$ac_cv_lib_soname_sdl2X11Emulation" >&6; }
 
 cat >>confdefs.h <<_ACEOF
-#define SONAME_LIBX11 "$ac_cv_lib_soname_X11"
+#define SONAME_LIBSDL2X11EMULATION "$ac_cv_lib_soname_sdl2X11Emulation"
 _ACEOF
 
 
@@ -11457,7 +11457,7 @@ if ${ac_cv_lib_soname_Xext+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_soname_save_LIBS=$LIBS
-LIBS="-lXext $X_LIBS -lX11 $X_EXTRA_LIBS $LIBS"
+LIBS="-lXext $X_LIBS -lsdl2X11Emulation $X_EXTRA_LIBS $LIBS"
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -11506,7 +11506,7 @@ _ACEOF
 
        X_LIBS="$X_LIBS -lXext"
 fi
-    X_LIBS="$X_LIBS -lX11"
+    X_LIBS="$X_LIBS -lsdl2X11Emulation"
 
         for ac_header in X11/Xlib.h \
                       X11/XKBlib.h \

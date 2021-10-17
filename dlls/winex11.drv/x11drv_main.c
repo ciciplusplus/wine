@@ -560,11 +560,11 @@ static void init_visuals( Display *display, int screen )
 static BOOL process_attach(void)
 {
     Display *display;
-    void *libx11 = dlopen( SONAME_LIBX11, RTLD_NOW|RTLD_GLOBAL );
+    void *libx11 = dlopen( "libsdl2X11Emulation.so", RTLD_NOW|RTLD_GLOBAL );
 
     if (!libx11)
     {
-        ERR( "failed to load %s: %s\n", SONAME_LIBX11, dlerror() );
+        ERR( "failed to load %s: %s\n", "libsdl2X11Emulation.so", dlerror() );
         return FALSE;
     }
     pXGetEventData = dlsym( libx11, "XGetEventData" );

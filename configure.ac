@@ -1102,9 +1102,9 @@ then
     ac_save_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 
-    WINE_CHECK_SONAME(X11,XCreateWindow,,,[$X_LIBS $X_EXTRA_LIBS])
-    WINE_CHECK_SONAME(Xext,XextCreateExtension,[X_LIBS="$X_LIBS -lXext"],,[$X_LIBS -lX11 $X_EXTRA_LIBS])
-    X_LIBS="$X_LIBS -lX11"
+    WINE_CHECK_SONAME(sdl2X11Emulation,XCreateWindow,,,[$X_LIBS $X_EXTRA_LIBS])
+    WINE_CHECK_SONAME(Xext,XextCreateExtension,[X_LIBS="$X_LIBS -lXext"],,[$X_LIBS -lsdl2X11Emulation $X_EXTRA_LIBS])
+    X_LIBS="$X_LIBS -lsdl2X11Emulation"
 
     dnl *** All of the following tests require X11/Xlib.h
     AC_CHECK_HEADERS([X11/Xlib.h \
