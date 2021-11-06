@@ -11391,7 +11391,7 @@ fi
 fi
 
 
-if test "$have_x" = "yes"
+if test "yes" = "yes"
 then
     ac_save_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS $X_CFLAGS"
@@ -11450,61 +11450,6 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-fi
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for -lXext" >&5
-$as_echo_n "checking for -lXext... " >&6; }
-if ${ac_cv_lib_soname_Xext+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_soname_save_LIBS=$LIBS
-LIBS="-lXext $X_LIBS -lsdl2X11Emulation $X_EXTRA_LIBS $LIBS"
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char XextCreateExtension ();
-int
-main ()
-{
-return XextCreateExtension ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  case "$LIBEXT" in
-    dll) ac_cv_lib_soname_Xext=`$ac_cv_path_LDD conftest.exe | grep "Xext" | sed -e "s/dll.*/dll/"';2,$d'` ;;
-    dylib) ac_cv_lib_soname_Xext=`$OTOOL -L conftest$ac_exeext | grep "libXext\\.[0-9A-Za-z.]*dylib" | sed -e "s/^.*\/\(libXext\.[0-9A-Za-z.]*dylib\).*$/\1/"';2,$d'` ;;
-    *) ac_cv_lib_soname_Xext=`$READELF -d conftest$ac_exeext | grep "NEEDED.*libXext\\.$LIBEXT" | sed -e "s/^.*\\[\\(libXext\\.$LIBEXT[^	 ]*\\)\\].*$/\1/"';2,$d'`
-       if ${ac_cv_lib_soname_Xext:+false} :; then :
-  ac_cv_lib_soname_Xext=`$LDD conftest$ac_exeext | grep "libXext\\.$LIBEXT" | sed -e "s/^.*\(libXext\.$LIBEXT[^	 ]*\).*$/\1/"';2,$d'`
-fi ;;
-  esac
-else
-  ac_cv_lib_soname_Xext=
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-  LIBS=$ac_check_soname_save_LIBS
-fi
-if ${ac_cv_lib_soname_Xext:+false} :; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
-$as_echo "not found" >&6; }
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_soname_Xext" >&5
-$as_echo "$ac_cv_lib_soname_Xext" >&6; }
-
-cat >>confdefs.h <<_ACEOF
-#define SONAME_LIBXEXT "$ac_cv_lib_soname_Xext"
-_ACEOF
-
-       X_LIBS="$X_LIBS -lXext"
 fi
     X_LIBS="$X_LIBS -lsdl2X11Emulation"
 
@@ -11736,116 +11681,6 @@ esac
 
 fi
         fi
-
-                if test "$ac_cv_header_X11_extensions_XShm_h" = "yes"
-        then
-              { $as_echo "$as_me:${as_lineno-$LINENO}: checking for XShmQueryExtension in -lXext" >&5
-$as_echo_n "checking for XShmQueryExtension in -lXext... " >&6; }
-if ${ac_cv_lib_Xext_XShmQueryExtension+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lXext $X_LIBS $X_EXTRA_LIBS $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char XShmQueryExtension ();
-int
-main ()
-{
-return XShmQueryExtension ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_Xext_XShmQueryExtension=yes
-else
-  ac_cv_lib_Xext_XShmQueryExtension=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_Xext_XShmQueryExtension" >&5
-$as_echo "$ac_cv_lib_Xext_XShmQueryExtension" >&6; }
-if test "x$ac_cv_lib_Xext_XShmQueryExtension" = xyes; then :
-
-$as_echo "#define HAVE_LIBXXSHM 1" >>confdefs.h
-
-fi
-
-        fi
-        if test "$ac_cv_lib_Xext_XShmQueryExtension" != "yes"; then :
-  case "x$with_xshm" in
-  x)   as_fn_append wine_notices "|XShm ${notice_platform}development files not found, X Shared Memory won't be supported." ;;
-  xno) ;;
-  *)   as_fn_error $? "XShm ${notice_platform}development files not found, X Shared Memory won't be supported.
-This is an error since --with-xshm was requested." "$LINENO" 5 ;;
-esac
-
-fi
-
-                if test "$ac_cv_header_X11_extensions_shape_h" = "yes"
-        then
-              { $as_echo "$as_me:${as_lineno-$LINENO}: checking for XShapeQueryExtension in -lXext" >&5
-$as_echo_n "checking for XShapeQueryExtension in -lXext... " >&6; }
-if ${ac_cv_lib_Xext_XShapeQueryExtension+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lXext $X_LIBS $X_EXTRA_LIBS $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char XShapeQueryExtension ();
-int
-main ()
-{
-return XShapeQueryExtension ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_Xext_XShapeQueryExtension=yes
-else
-  ac_cv_lib_Xext_XShapeQueryExtension=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_Xext_XShapeQueryExtension" >&5
-$as_echo "$ac_cv_lib_Xext_XShapeQueryExtension" >&6; }
-if test "x$ac_cv_lib_Xext_XShapeQueryExtension" = xyes; then :
-
-$as_echo "#define HAVE_LIBXSHAPE 1" >>confdefs.h
-
-fi
-
-        fi
-        if test "$ac_cv_lib_Xext_XShapeQueryExtension" != "yes"; then :
-  case "x$with_xshape" in
-  x)   as_fn_append wine_notices "|XShape ${notice_platform}development files not found, XShape won't be supported." ;;
-  xno) ;;
-  *)   as_fn_error $? "XShape ${notice_platform}development files not found, XShape won't be supported.
-This is an error since --with-xshape was requested." "$LINENO" 5 ;;
-esac
-
-fi
 
                 if test "$ac_cv_header_X11_extensions_xf86vmode_h" = "yes" -o "$ac_cv_header_X11_extensions_xf86vmproto_h" = "yes"
         then

@@ -1097,13 +1097,12 @@ dnl **** Check for X11 ****
 
 AC_PATH_XTRA
 
-if test "$have_x" = "yes"
+if test "yes" = "yes"
 then
     ac_save_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 
     WINE_CHECK_SONAME(sdl2X11Emulation,XCreateWindow,,,[$X_LIBS $X_EXTRA_LIBS])
-    WINE_CHECK_SONAME(Xext,XextCreateExtension,[X_LIBS="$X_LIBS -lXext"],,[$X_LIBS -lsdl2X11Emulation $X_EXTRA_LIBS])
     X_LIBS="$X_LIBS -lsdl2X11Emulation"
 
     dnl *** All of the following tests require X11/Xlib.h
@@ -1158,24 +1157,6 @@ then
             WINE_NOTICE_WITH(xinput2,[test "$ac_cv_header_X11_extensions_XInput2_h" != "yes"],
                              [XInput2 headers not found, the XInput 2 extension won't be supported.])
         fi
-
-        dnl *** Check for X Shm extension
-        if test "$ac_cv_header_X11_extensions_XShm_h" = "yes"
-        then
-              AC_CHECK_LIB(Xext, XShmQueryExtension,
-              AC_DEFINE(HAVE_LIBXXSHM, 1, [Define if you have the X Shm extension]),,[$X_LIBS $X_EXTRA_LIBS])
-        fi
-        WINE_NOTICE_WITH(xshm,[test "$ac_cv_lib_Xext_XShmQueryExtension" != "yes"],
-                         [XShm ${notice_platform}development files not found, X Shared Memory won't be supported.])
-
-        dnl *** Check for X shape extension
-        if test "$ac_cv_header_X11_extensions_shape_h" = "yes"
-        then
-              AC_CHECK_LIB(Xext,XShapeQueryExtension,
-	      AC_DEFINE(HAVE_LIBXSHAPE, 1, [Define if you have the X Shape extension]),,[$X_LIBS $X_EXTRA_LIBS])
-        fi
-        WINE_NOTICE_WITH(xshape,[test "$ac_cv_lib_Xext_XShapeQueryExtension" != "yes"],
-                         [XShape ${notice_platform}development files not found, XShape won't be supported.])
 
         dnl *** Check for XFree86 VMODE extension
         if test "$ac_cv_header_X11_extensions_xf86vmode_h" = "yes" -o "$ac_cv_header_X11_extensions_xf86vmproto_h" = "yes"
