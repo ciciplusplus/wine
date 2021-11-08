@@ -105,9 +105,13 @@ static HBITMAP create_color_bitmap( int width, int height )
 
 static int get_display_bpp(void)
 {
+    ERR("CURSOR_ICON get_display_bpp START %d file %s\n", __LINE__, __FILE__);
     HDC hdc = get_display_dc();
+    ERR("CURSOR_ICON after get_display_dc %d file %s\n", __LINE__, __FILE__);
     int ret = GetDeviceCaps( hdc, BITSPIXEL );
+    ERR("CURSOR_ICON after GetDeviceCaps %d file %s\n", __LINE__, __FILE__);
     release_display_dc( hdc );
+    ERR("CURSOR_ICON get_display_bpp END %d file %s\n", __LINE__, __FILE__);
     return ret;
 }
 
@@ -1486,7 +1490,9 @@ static HICON CURSORICON_Load(HINSTANCE hInstance, LPCWSTR name,
     WORD wResId;
     POINT hotspot;
 
-    TRACE("%p, %s, %dx%d, depth %d, fCursor %d, flags 0x%04x\n",
+    ERR("CURSOR_ICON CURSORICON_Load START %d file %s\n", __LINE__, __FILE__);
+
+    ERR("%p, %s, %dx%d, depth %d, fCursor %d, flags 0x%04x\n",
           hInstance, debugstr_w(name), width, height, depth, fCursor, loadflags);
 
     if ( loadflags & LR_LOADFROMFILE )    /* Load from file */
@@ -1942,7 +1948,7 @@ INT WINAPI LookupIconIdFromDirectory( LPBYTE dir, BOOL bIcon )
  */
 HCURSOR WINAPI LoadCursorW(HINSTANCE hInstance, LPCWSTR name)
 {
-    TRACE("%p, %s\n", hInstance, debugstr_w(name));
+    ERR("LoadCursorW %p, %s\n", hInstance, debugstr_w(name));
 
     return LoadImageW( hInstance, name, IMAGE_CURSOR, 0, 0,
                        LR_SHARED | LR_DEFAULTSIZE );
@@ -2744,7 +2750,9 @@ HANDLE WINAPI LoadImageW( HINSTANCE hinst, LPCWSTR name, UINT type,
     int depth;
     WCHAR path[MAX_PATH];
 
-    TRACE_(resource)("(%p,%s,%d,%d,%d,0x%08x)\n",
+    ERR("CURSOR_ICON LoadImageW START %d file %s\n", __LINE__, __FILE__);
+
+    ERR_(resource)("(%p,%s,%d,%d,%d,0x%08x)\n",
                      hinst,debugstr_w(name),type,desiredx,desiredy,loadflags);
 
     if (loadflags & LR_LOADFROMFILE)
@@ -2753,14 +2761,18 @@ HANDLE WINAPI LoadImageW( HINSTANCE hinst, LPCWSTR name, UINT type,
         /* relative paths are not only relative to the current working directory */
         if (SearchPathW(NULL, name, NULL, ARRAY_SIZE(path), path, NULL)) name = path;
     }
+    ERR("CURSOR_ICON SearchPathW %d file %s\n", __LINE__, __FILE__);
     switch (type) {
     case IMAGE_BITMAP:
+        ERR("CURSOR_ICON IMAGE_BITMAP %d file %s\n", __LINE__, __FILE__);
         return BITMAP_Load( hinst, name, desiredx, desiredy, loadflags );
 
     case IMAGE_ICON:
     case IMAGE_CURSOR:
+        ERR("CURSOR_ICON IMAGE_CURSOR %d file %s\n", __LINE__, __FILE__);
         depth = 1;
         if (!(loadflags & LR_MONOCHROME)) depth = get_display_bpp();
+        ERR("CURSOR_ICON before CURSORICON_Load %d file %s\n", __LINE__, __FILE__);
         return CURSORICON_Load(hinst, name, desiredx, desiredy, depth, (type == IMAGE_CURSOR), loadflags);
     }
     return 0;

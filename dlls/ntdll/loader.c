@@ -3455,6 +3455,9 @@ void WINAPI LdrInitializeThunk( CONTEXT *context, ULONG_PTR unknown2, ULONG_PTR 
     void **entry;
     LPCWSTR load_path = NtCurrentTeb()->Peb->ProcessParameters->DllPath.Buffer;
 
+    ERR("LOADER LdrInitializeThunk START %d file %s\n", __LINE__, __FILE__);
+    ERR("LOAD PATH %s\n", debugstr_w(load_path));
+
 #ifdef __i386__
     entry = (void **)&context->Eax;
 #elif defined(__x86_64__)

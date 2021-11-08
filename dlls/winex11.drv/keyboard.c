@@ -1635,6 +1635,8 @@ void X11DRV_InitKeyboard( Display *display )
     };
     int vkey_range;
 
+    ERR( "X11 X11DRV_InitKeyboard START %d file %s\n", __LINE__, __FILE__);
+
     set_kbd_layout_preload_key();
 
     EnterCriticalSection( &kbd_section );
@@ -1668,6 +1670,8 @@ void X11DRV_InitKeyboard( Display *display )
             }
     }
     XFreeModifiermap(mmp);
+
+    ERR( "X11 X11DRV_InitKeyboard Modifiermap %d file %s\n", __LINE__, __FILE__);
 
     /* Detect the keyboard layout */
     X11DRV_KEYBOARD_DetectLayout( display );
@@ -1860,18 +1864,23 @@ void X11DRV_InitKeyboard( Display *display )
     } /* for */
 #undef VKEY_IF_NOT_USED
 
+    ERR( "X11 X11DRV_InitKeyboard VKEY_IF_NOT_USED %d file %s\n", __LINE__, __FILE__);
+
     /* If some keys still lack scancodes, assign some arbitrary ones to them now */
     for (scan = 0x60, keyc = min_keycode; keyc <= max_keycode; keyc++)
       if (keyc2vkey[keyc]&&!keyc2scan[keyc]) {
-	const char *ksname;
-	keysym = keycode_to_keysym(display, keyc, 0);
-	ksname = XKeysymToString(keysym);
-	if (!ksname) ksname = "NoSymbol";
+        ERR( "X11 X11DRV_InitKeyboard KEYC %d\n", keyc);
+        const char *ksname;
+        keysym = keycode_to_keysym(display, keyc, 0);
+        ERR( "X11 X11DRV_InitKeyboard KEYSYM %lu\n", keysym);
+        ksname = XKeysymToString(keysym);
+        ERR( "X11 X11DRV_InitKeyboard XKeysymToString %d file %s\n", __LINE__, __FILE__);
+        if (!ksname) ksname = "NoSymbol";
 
-	/* should make sure the scancode is unassigned here, but >=0x60 currently always is */
+        /* should make sure the scancode is unassigned here, but >=0x60 currently always is */
 
-	TRACE_(key)("assigning scancode %02x to unidentified keycode %u (%s)\n",scan,keyc,ksname);
-	keyc2scan[keyc]=scan++;
+        TRACE_(key)("assigning scancode %02x to unidentified keycode %u (%s)\n",scan,keyc,ksname);
+        keyc2scan[keyc]=scan++;
       }
 
     LeaveCriticalSection( &kbd_section );

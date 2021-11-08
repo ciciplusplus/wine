@@ -250,6 +250,9 @@ static LONG xf86vm_set_current_mode(ULONG_PTR id, DEVMODEW *mode)
 
 void X11DRV_XF86VM_Init(void)
 {
+    usexvidmode = FALSE;
+    return;
+
   struct x11drv_settings_handler xf86vm_handler;
   void *xvidmode_handle;
   Bool ok;

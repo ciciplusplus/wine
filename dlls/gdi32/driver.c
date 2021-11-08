@@ -96,6 +96,8 @@ static struct graphics_driver *create_driver( HMODULE module )
     const struct gdi_dc_funcs *funcs = NULL;
     struct graphics_driver *driver;
 
+    ERR("DRIVER create_driver START %d file %s\n", __LINE__, __FILE__);
+
     if (!(driver = HeapAlloc( GetProcessHeap(), 0, sizeof(*driver)))) return NULL;
     driver->module = module;
 
@@ -119,6 +121,8 @@ static struct graphics_driver *create_driver( HMODULE module )
  */
 static const struct gdi_dc_funcs *get_display_driver(void)
 {
+    ERR("DRIVER get_display_driver START %d file %s\n", __LINE__, __FILE__);
+
     if (!display_driver)
     {
         HMODULE user32 = LoadLibraryA( "user32.dll" );
@@ -130,6 +134,7 @@ static const struct gdi_dc_funcs *get_display_driver(void)
             __wine_set_display_driver( 0 );
         }
     }
+    ERR("DRIVER get_display_driver END %d file %s\n", __LINE__, __FILE__);
     return display_driver->funcs;
 }
 
@@ -179,8 +184,12 @@ const struct gdi_dc_funcs *DRIVER_load_driver( LPCWSTR name )
     HMODULE module;
     struct graphics_driver *driver, *new_driver;
 
+    ERR("DRIVER DRIVER_load_driver START %d file %s\n", __LINE__, __FILE__);
+
     /* display driver is a special case */
     if (!wcsicmp( name, L"display" ) || is_display_device( name )) return get_display_driver();
+
+    ERR("DRIVER DRIVER_load_driver after get_display_driver %d file %s\n", __LINE__, __FILE__);
 
     if ((module = GetModuleHandleW( name )))
     {
@@ -227,6 +236,8 @@ void CDECL __wine_set_display_driver( HMODULE module )
 {
     struct graphics_driver *driver;
     HMODULE user32;
+
+    ERR("DRIVER __wine_set_display_driver START %d file %s\n", __LINE__, __FILE__);
 
     if (!(driver = create_driver( module )))
     {

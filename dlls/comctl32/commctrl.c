@@ -166,10 +166,12 @@ BOOL WINAPI RegisterClassNameW(const WCHAR *class)
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-    TRACE("%p,%x,%p\n", hinstDLL, fdwReason, lpvReserved);
+    ERR("COMCTL32 DllMain START %d file %s\n", __LINE__, __FILE__);
+    ERR("%p,%x,%p\n", hinstDLL, fdwReason, lpvReserved);
 
     switch (fdwReason) {
 	case DLL_PROCESS_ATTACH:
+            ERR("COMCTL32 DllMain DLL_PROCESS_ATTACH START %d file %s\n", __LINE__, __FILE__);
             DisableThreadLibraryCalls(hinstDLL);
 
             COMCTL32_hModule = hinstDLL;
@@ -182,11 +184,14 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
             COMCTL32_hPattern55AABitmap = CreateBitmap (8, 8, 1, 1, wPattern55AA);
             COMCTL32_hPattern55AABrush = CreatePatternBrush (COMCTL32_hPattern55AABitmap);
 
-	    /* Get all the colors at DLL load */
-	    COMCTL32_RefreshSysColors();
+            /* Get all the colors at DLL load */
+            COMCTL32_RefreshSysColors();
+
+            ERR("COMCTL32 DllMain COMCTL32_RefreshSysColors %d file %s\n", __LINE__, __FILE__);
 
             /* like comctl32 5.82+ register all the common control classes */
             ANIMATE_Register ();
+            ERR("COMCTL32 DllMain ANIMATE_Register %d file %s\n", __LINE__, __FILE__);
             COMBOEX_Register ();
             DATETIME_Register ();
             FLATSB_Register ();
@@ -210,9 +215,11 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 
             /* subclass user32 controls */
             THEMING_Initialize ();
+            ERR("COMCTL32 DllMain DLL_PROCESS_ATTACH END %d file %s\n", __LINE__, __FILE__);
             break;
 
 	case DLL_PROCESS_DETACH:
+            ERR("COMCTL32 DllMain DLL_PROCESS_DETACH START %d file %s\n", __LINE__, __FILE__);
             if (lpvReserved) break;
             /* clean up subclassing */
             THEMING_Uninitialize();
@@ -249,9 +256,11 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
             /* delete global subclassing atom */
             GlobalDeleteAtom (LOWORD(COMCTL32_wSubclass));
             TRACE("Subclassing atom deleted: %p\n", COMCTL32_wSubclass);
+            ERR("COMCTL32 DllMain DLL_PROCESS_DETACH END %d file %s\n", __LINE__, __FILE__);
             break;
     }
 
+    ERR("COMCTL32 DllMain END %d file %s\n", __LINE__, __FILE__);
     return TRUE;
 }
 

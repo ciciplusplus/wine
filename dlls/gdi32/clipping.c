@@ -99,6 +99,8 @@ void update_dc_clipping( DC * dc )
     HRGN regions[3];
     int count = 0;
 
+    ERR( "DC update_dc_clipping START %d in file %s\n", __LINE__, __FILE__);
+
     if (dc->hVisRgn)  regions[count++] = dc->hVisRgn;
     if (dc->hClipRgn) regions[count++] = dc->hClipRgn;
     if (dc->hMetaRgn) regions[count++] = dc->hMetaRgn;
@@ -115,6 +117,8 @@ void update_dc_clipping( DC * dc )
         dc->region = 0;
     }
     physdev->funcs->pSetDeviceClipping( physdev, get_dc_region( dc ));
+
+    ERR( "DC update_dc_clipping END %d in file %s\n", __LINE__, __FILE__);
 }
 
 /***********************************************************************
@@ -186,6 +190,7 @@ INT CDECL nulldrv_ExtSelectClipRgn( PHYSDEV dev, HRGN rgn, INT mode )
         if (mirrored) DeleteObject( mirrored );
     }
     update_dc_clipping( dc );
+    ERR( "DC nulldrv_ExtSelectClipRgn after update_dc_clipping END %d in file %s\n", __LINE__, __FILE__);
     return ret;
 }
 
@@ -200,7 +205,10 @@ INT CDECL nulldrv_ExcludeClipRect( PHYSDEV dev, INT left, INT top, INT right, IN
     if (!dc->hClipRgn) create_default_clip_region( dc );
     ret = CombineRgn( dc->hClipRgn, dc->hClipRgn, rgn, RGN_DIFF );
     DeleteObject( rgn );
-    if (ret != ERROR) update_dc_clipping( dc );
+    if (ret != ERROR) {
+        update_dc_clipping( dc );
+        ERR( "DC nulldrv_ExcludeClipRect after update_dc_clipping END %d in file %s\n", __LINE__, __FILE__);
+    }
     return ret;
 }
 
@@ -222,7 +230,10 @@ INT CDECL nulldrv_IntersectClipRect( PHYSDEV dev, INT left, INT top, INT right, 
         ret = CombineRgn( dc->hClipRgn, dc->hClipRgn, rgn, RGN_AND );
         DeleteObject( rgn );
     }
-    if (ret != ERROR) update_dc_clipping( dc );
+    if (ret != ERROR) {
+        update_dc_clipping( dc );
+        ERR( "DC nulldrv_IntersectClipRect after update_dc_clipping END %d in file %s\n", __LINE__, __FILE__);
+    }
     return ret;
 }
 
@@ -237,7 +248,8 @@ INT CDECL nulldrv_OffsetClipRgn( PHYSDEV dev, INT x, INT y )
         y = MulDiv( y, dc->vport_ext.cy, dc->wnd_ext.cy );
         if (dc->layout & LAYOUT_RTL) x = -x;
         ret = OffsetRgn( dc->hClipRgn, x, y );
-	update_dc_clipping( dc );
+	    update_dc_clipping( dc );
+        ERR( "DC nulldrv_OffsetClipRgn after update_dc_clipping END %d in file %s\n", __LINE__, __FILE__);
     }
     return ret;
 }
@@ -295,6 +307,7 @@ void CDECL __wine_set_visible_region( HDC hdc, HRGN hrgn, const RECT *vis_rect, 
     dibdrv_set_window_surface( dc, surface );
     DC_UpdateXforms( dc );
     update_dc_clipping( dc );
+    ERR( "DC __wine_set_visible_region after update_dc_clipping END %d in file %s\n", __LINE__, __FILE__);
     release_dc_ptr( dc );
 }
 

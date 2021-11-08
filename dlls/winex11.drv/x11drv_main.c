@@ -323,7 +323,11 @@ static void init_pixmap_formats( Display *display )
         if (formats[i].depth > max) max = formats[i].depth;
     }
     pixmap_formats = HeapAlloc( GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*pixmap_formats) * (max + 1) );
-    for (i = 0; i < count; i++) pixmap_formats[formats[i].depth] = &formats[i];
+    for (i = 0; i < count; i++) {
+        pixmap_formats[formats[i].depth] = &formats[i];
+        ERR( "X11 process_attach FORMATS DEPTH %d %d\n", i, formats[i].depth);
+    }
+
 }
 
 
@@ -461,6 +465,9 @@ static int xcomp_error_base;
 
 static void X11DRV_XComposite_Init(void)
 {
+    usexcomposite = FALSE;
+    return;
+
     void *xcomposite_handle = dlopen(SONAME_LIBXCOMPOSITE, RTLD_NOW);
     if (!xcomposite_handle)
     {
@@ -559,6 +566,8 @@ static void init_visuals( Display *display, int screen )
  */
 static BOOL process_attach(void)
 {
+    ERR( "X11 process_attach START %d in file %s\n", __LINE__, __FILE__);
+
     Display *display;
     void *libx11 = dlopen( "libsdl2X11Emulation.so", RTLD_NOW|RTLD_GLOBAL );
 
@@ -579,6 +588,8 @@ static BOOL process_attach(void)
 
     /* Open display */
 
+    ERR( "X11 process_attach Open display %d in file %s\n", __LINE__, __FILE__);
+
     if (!XInitThreads()) ERR( "XInitThreads failed, trouble ahead\n" );
     if (!(display = XOpenDisplay( NULL ))) return FALSE;
 
@@ -587,11 +598,21 @@ static BOOL process_attach(void)
     gdi_display = display;
     old_error_handler = XSetErrorHandler( error_handler );
 
+    ERR( "X11 process_attach DefaultRootWindow %d in file %s\n", __LINE__, __FILE__);
+
     init_pixmap_formats( display );
+
+    ERR( "X11 process_attach PIXMAP %d file %s\n", __LINE__, __FILE__);
+
     init_visuals( display, DefaultScreen( display ));
+    ERR( "X11 process_attach VISUALS %d file %s\n", __LINE__, __FILE__);
+    ERR( "X11 process_attach DEPTH %d\n", default_visual.depth);
     screen_bpp = pixmap_formats[default_visual.depth]->bits_per_pixel;
+    ERR( "X11 process_attach SCREEN_BPP %d file %s\n", __LINE__, __FILE__);
 
     XInternAtoms( display, (char **)atom_names, NB_XATOMS - FIRST_XATOM, False, X11DRV_Atoms );
+
+    ERR( "X11 process_attach ATOMS %d file %s\n", __LINE__, __FILE__);
 
     winContext = XUniqueContext();
     win_data_context = XUniqueContext();
@@ -601,24 +622,38 @@ static BOOL process_attach(void)
 
     xinerama_init( DisplayWidth( display, default_visual.screen ),
                    DisplayHeight( display, default_visual.screen ));
+    ERR( "X11 process_attach XINERAMA %d file %s\n", __LINE__, __FILE__);
     X11DRV_Settings_Init();
+
+    ERR( "X11 process_attach SETTINGS INIT %d file %s\n", __LINE__, __FILE__);
 
     /* initialize XVidMode */
     X11DRV_XF86VM_Init();
+    ERR( "X11 process_attach XF86VM %d file %s\n", __LINE__, __FILE__);
     /* initialize XRandR */
     X11DRV_XRandR_Init();
+
+    ERR( "X11 process_attach XRANDR %d file %s\n", __LINE__, __FILE__);
+
 #ifdef SONAME_LIBXCOMPOSITE
     X11DRV_XComposite_Init();
+    ERR( "X11 process_attach COMPOSITE %d file %s\n", __LINE__, __FILE__);
 #endif
     X11DRV_XInput2_Init();
+
+    ERR( "X11 process_attach XINPUT %d file %s\n", __LINE__, __FILE__);
 
 #ifdef HAVE_XKB
     if (use_xkb) use_xkb = XkbUseExtension( gdi_display, NULL, NULL );
 #endif
     X11DRV_InitKeyboard( gdi_display );
+    ERR( "X11 process_attach INIT KBD %d file %s\n", __LINE__, __FILE__);
+
     if (use_xim) use_xim = X11DRV_InitXIM( input_style );
 
     X11DRV_DisplayDevices_Init(FALSE);
+
+    ERR( "X11 process_attach END %d file %s\n", __LINE__, __FILE__);
     return TRUE;
 }
 
@@ -730,6 +765,7 @@ BOOL WINAPI DllMain( HINSTANCE hinst, DWORD reason, LPVOID reserved )
  */
 BOOL CDECL X11DRV_SystemParametersInfo( UINT action, UINT int_param, void *ptr_param, UINT flags )
 {
+    ERR( "X11 X11DRV_SystemParametersInfo START %d in file %s\n", __LINE__, __FILE__);
     switch (action)
     {
     case SPI_GETSCREENSAVEACTIVE:
@@ -758,6 +794,8 @@ BOOL CDECL X11DRV_SystemParametersInfo( UINT action, UINT int_param, void *ptr_p
         }
         break;
     }
+
+    ERR( "X11 X11DRV_SystemParametersInfo END %d in file %s\n", __LINE__, __FILE__);
     return FALSE;  /* let user32 handle it */
 }
 

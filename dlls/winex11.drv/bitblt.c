@@ -1589,6 +1589,7 @@ static inline UINT get_color_component( UINT color, UINT mask )
     return (color * mask / 255) << shift;
 }
 
+#undef HAVE_LIBXSHAPE
 #ifdef HAVE_LIBXSHAPE
 static inline void flush_rgn_data( HRGN rgn, RGNDATA *data )
 {

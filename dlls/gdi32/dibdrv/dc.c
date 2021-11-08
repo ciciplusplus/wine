@@ -1188,6 +1188,8 @@ static INT CDECL windrv_SetDIBitsToDevice( PHYSDEV dev, INT x_dst, INT y_dst, DW
 
 static void CDECL windrv_SetDeviceClipping( PHYSDEV dev, HRGN rgn )
 {
+    ERR( "DC windrv_SetDeviceClipping START %d in file %s\n", __LINE__, __FILE__);
+
     dev = GET_NEXT_PHYSDEV( dev, pSetDeviceClipping );
     dev->funcs->pSetDeviceClipping( dev, rgn );
     /* also forward to the graphics driver for the OpenGL case */

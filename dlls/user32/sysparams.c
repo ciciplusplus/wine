@@ -547,19 +547,23 @@ static BOOL init_entry_string( struct sysparam_entry *entry, const WCHAR *str )
 
 HDC get_display_dc(void)
 {
+    ERR("SYSPARAMS get_display_dc START %d file %s\n", __LINE__, __FILE__);
     EnterCriticalSection( &display_dc_section );
     if (!display_dc)
     {
         HDC dc;
 
         LeaveCriticalSection( &display_dc_section );
+        ERR("SYSPARAMS get_display_dc LeaveCriticalSection %d file %s\n", __LINE__, __FILE__);
         dc = CreateDCW( L"DISPLAY", NULL, NULL, NULL );
+        ERR("SYSPARAMS get_display_dc CreateDCW %d file %s\n", __LINE__, __FILE__);
         EnterCriticalSection( &display_dc_section );
         if (display_dc)
             DeleteDC(dc);
         else
             display_dc = dc;
     }
+    ERR("SYSPARAMS get_display_dc END %d file %s\n", __LINE__, __FILE__);
     return display_dc;
 }
 

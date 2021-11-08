@@ -33,6 +33,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
+#undef HAVE_LIBXSHAPE
 #ifdef HAVE_LIBXSHAPE
 #include <X11/extensions/shape.h>
 #endif /* HAVE_LIBXSHAPE */
@@ -386,6 +387,8 @@ static void sync_window_style( struct x11drv_win_data *data )
  */
 static void sync_window_region( struct x11drv_win_data *data, HRGN win_region )
 {
+    ERR("WINDOW sync_window_region START %d in file %s\n", __LINE__, __FILE__);
+
 #ifdef HAVE_LIBXSHAPE
     HRGN hrgn = win_region;
 
@@ -394,11 +397,18 @@ static void sync_window_region( struct x11drv_win_data *data, HRGN win_region )
 
     if (IsRectEmpty( &data->window_rect ))  /* set an empty shape */
     {
+        ERR("WINDOW sync_window_region EMPTY SHAPE START %d in file %s\n", __LINE__, __FILE__);
         static XRectangle empty_rect;
+        ERR("DATA %p\n", data);
+        ERR("DATA DISPLAY %p\n", data->display);
+        ERR("DATA WINDOW %lu\n", data->whole_window);
         XShapeCombineRectangles( data->display, data->whole_window, ShapeBounding, 0, 0,
                                  &empty_rect, 1, ShapeSet, YXBanded );
+        ERR("WINDOW sync_window_region EMPTY SHAPE END %d in file %s\n", __LINE__, __FILE__);
         return;
     }
+
+    ERR("WINDOW sync_window_region after EMPTY SHAPE %d in file %s\n", __LINE__, __FILE__);
 
     if (hrgn == (HRGN)1)  /* hack: win_region == 1 means retrieve region from server */
     {
@@ -490,7 +500,9 @@ static void sync_window_text( Display *display, Window win, const WCHAR *text )
                      8, PropModeReplace, (unsigned char *) utf8_buffer, count);
 
     HeapFree( GetProcessHeap(), 0, utf8_buffer );
+    ERR("sync_window_text FREE utf8_buffer %d in file %s\n", __LINE__, __FILE__);
     HeapFree( GetProcessHeap(), 0, buffer );
+    ERR("sync_window_text FREE buffer %d in file %s\n", __LINE__, __FILE__);
 }
 
 
@@ -861,12 +873,17 @@ static void set_initial_wm_hints( Display *display, Window window )
         XFree( class_hints );
     }
 
+    ERR("WINDOW set_initial_wm_hints CLASSHINT %d in file %s\n", __LINE__, __FILE__);
+
     /* set the WM_CLIENT_MACHINE and WM_LOCALE_NAME properties */
     XSetWMProperties(display, window, NULL, NULL, NULL, 0, NULL, NULL, NULL);
     /* set the pid. together, these properties are needed so the window manager can kill us if we freeze */
     i = getpid();
+
+    ERR("WINDOW set_initial_wm_hints before _NET_WM_PID %d in file %s\n", __LINE__, __FILE__);
     XChangeProperty(display, window, x11drv_atom(_NET_WM_PID),
                     XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&i, 1);
+    ERR("WINDOW set_initial_wm_hints after _NET_WM_PID %d in file %s\n", __LINE__, __FILE__);
 
     XChangeProperty( display, window, x11drv_atom(XdndAware),
                      XA_ATOM, 32, PropModeReplace, (unsigned char*)&dndVersion, 1 );
@@ -875,6 +892,8 @@ static void set_initial_wm_hints( Display *display, Window window )
     if (user_time_window)
         XChangeProperty( display, window, x11drv_atom(_NET_WM_USER_TIME_WINDOW),
                          XA_WINDOW, 32, PropModeReplace, (unsigned char *)&user_time_window, 1 );
+
+    ERR("WINDOW set_initial_wm_hints END %d in file %s\n", __LINE__, __FILE__);
 }
 
 
@@ -1582,9 +1601,11 @@ static void create_whole_window( struct x11drv_win_data *data )
     /* set the window text */
     if (!InternalGetWindowText( data->hwnd, text, ARRAY_SIZE( text ))) text[0] = 0;
     sync_window_text( data->display, data->whole_window, text );
+    ERR("WINDOW sync_window_text %d in file %s\n", __LINE__, __FILE__);
 
     /* set the window region */
     if (win_rgn || IsRectEmpty( &data->window_rect )) sync_window_region( data, win_rgn );
+    ERR("WINDOW sync_window_region %d in file %s\n", __LINE__, __FILE__);
 
     /* set the window opacity */
     if (!GetLayeredWindowAttributes( data->hwnd, &key, &alpha, &layered_flags )) layered_flags = 0;
@@ -1593,6 +1614,7 @@ static void create_whole_window( struct x11drv_win_data *data )
     XFlush( data->display );  /* make sure the window exists before we start painting to it */
 
     sync_window_cursor( data->whole_window );
+    ERR("WINDOW sync_window_cursor %d in file %s\n", __LINE__, __FILE__);
 
 done:
     if (win_rgn) DeleteObject( win_rgn );
@@ -1696,6 +1718,7 @@ void CDECL X11DRV_SetWindowText( HWND hwnd, LPCWSTR text )
     {
         Display *display = thread_init_display();
         sync_window_text( display, win, text );
+        ERR("WINDOW X11DRV_SetWindowText sync_window_text %d in file %s\n", __LINE__, __FILE__);
     }
 }
 
@@ -1899,8 +1922,10 @@ struct x11drv_win_data *get_win_data( HWND hwnd )
 
     if (!hwnd) return NULL;
     EnterCriticalSection( &win_data_section );
+    ERR( "WINDOW get_win_data before XFindContext %d in file %s\n", __LINE__, __FILE__);
     if (!XFindContext( gdi_display, (XID)hwnd, win_data_context, &data ))
         return (struct x11drv_win_data *)data;
+    ERR( "WINDOW get_win_data after XFindContext %d in file %s\n", __LINE__, __FILE__);
     LeaveCriticalSection( &win_data_section );
     return NULL;
 }
@@ -2016,6 +2041,7 @@ HWND create_foreign_window( Display *display, Window xwin )
         class_registered = TRUE;
     }
 
+    ERR( "WINDOW create_foreign_window before XFindContext %d in file %s\n", __LINE__, __FILE__);
     if (XFindContext( display, xwin, winContext, (char **)&hwnd )) hwnd = 0;
     if (hwnd) return hwnd;  /* already created */
 

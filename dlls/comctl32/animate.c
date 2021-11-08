@@ -962,18 +962,27 @@ static LRESULT WINAPI ANIMATE_WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 
 void ANIMATE_Register(void)
 {
+    ERR("ANIMATE ANIMATE_Register START %d file %s\n", __LINE__, __FILE__);
+
     WNDCLASSW wndClass;
 
     ZeroMemory(&wndClass, sizeof(WNDCLASSW));
+    ERR("ANIMATE ZeroMemory %d file %s\n", __LINE__, __FILE__);
+
     wndClass.style         = CS_GLOBALCLASS | CS_DBLCLKS;
     wndClass.lpfnWndProc   = ANIMATE_WindowProc;
     wndClass.cbClsExtra    = 0;
     wndClass.cbWndExtra    = sizeof(ANIMATE_INFO *);
+    ERR("ANIMATE after cbWndExtra set %d file %s\n", __LINE__, __FILE__);
     wndClass.hCursor       = LoadCursorW(0, (LPCWSTR)IDC_ARROW);
+    ERR("ANIMATE after LoadCursorW set %d file %s\n", __LINE__, __FILE__);
     wndClass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
     wndClass.lpszClassName = ANIMATE_CLASSW;
 
+    ERR("ANIMATE wndClass sets %d file %s\n", __LINE__, __FILE__);
+
     RegisterClassW(&wndClass);
+    ERR("ANIMATE ANIMATE_Register END %d file %s\n", __LINE__, __FILE__);
 }
 
 

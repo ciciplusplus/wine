@@ -628,6 +628,8 @@ HDC WINAPI CreateDCW( LPCWSTR driver, LPCWSTR device, LPCWSTR output,
     const struct gdi_dc_funcs *funcs;
     WCHAR buf[300];
 
+    ERR("DC CreateDCW START %d file %s\n", __LINE__, __FILE__);
+
     GDI_CheckNotLock();
 
     if (!device || !DRIVER_GetDriverName( device, buf, 300 ))
@@ -640,17 +642,24 @@ HDC WINAPI CreateDCW( LPCWSTR driver, LPCWSTR device, LPCWSTR output,
         lstrcpyW(buf, driver);
     }
 
+    ERR( "DEVICE %s\n", debugstr_w(device) );
+    ERR( "DRIVER %s\n", debugstr_w(buf) );
+
+    ERR("DC CreateDCW after get driver name %d file %s\n", __LINE__, __FILE__);
+
     if (!(funcs = DRIVER_load_driver( buf )))
     {
         ERR( "no driver found for %s\n", debugstr_w(buf) );
         return 0;
     }
+    ERR("DC CreateDCW after DRIVER_load_driver %d file %s\n", __LINE__, __FILE__);
+
     if (!(dc = alloc_dc_ptr( OBJ_DC ))) return 0;
     hdc = dc->hSelf;
 
     dc->hBitmap = GDI_inc_ref_count( GetStockObject( DEFAULT_BITMAP ));
 
-    TRACE("(driver=%s, device=%s, output=%s): returning %p\n",
+    ERR("(driver=%s, device=%s, output=%s): returning %p\n",
           debugstr_w(driver), debugstr_w(device), debugstr_w(output), dc->hSelf );
 
     if (funcs->pCreateDC)
@@ -663,11 +672,14 @@ HDC WINAPI CreateDCW( LPCWSTR driver, LPCWSTR device, LPCWSTR output,
         }
     }
 
+    ERR("DC CreateDCW after pCreateDC %d file %s\n", __LINE__, __FILE__);
+
     dc->vis_rect.left   = 0;
     dc->vis_rect.top    = 0;
     dc->vis_rect.right  = GetDeviceCaps( hdc, DESKTOPHORZRES );
     dc->vis_rect.bottom = GetDeviceCaps( hdc, DESKTOPVERTRES );
 
+    ERR("DC CreateDCW before DC_InitDC %d file %s\n", __LINE__, __FILE__);
     DC_InitDC( dc );
     release_dc_ptr( dc );
     return hdc;

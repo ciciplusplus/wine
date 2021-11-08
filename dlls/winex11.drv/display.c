@@ -284,11 +284,17 @@ RECT get_work_area(const RECT *monitor_rect)
     long *work_area;
     RECT work_rect;
 
+    ERR( "X11 get_work_area START %d file %s\n", __LINE__, __FILE__);
+
     /* Try _GTK_WORKAREAS first as _NET_WORKAREA may be incorrect on multi-monitor systems */
     if (!XGetWindowProperty(gdi_display, DefaultRootWindow(gdi_display),
                             x11drv_atom(_GTK_WORKAREAS_D0), 0, ~0, False, XA_CARDINAL, &type,
                             &format, &count, &remaining, (unsigned char **)&work_area))
     {
+        ERR( "X11 get_work_area _GTK_WORKAREAS XGetWindowProperty %d file %s\n", __LINE__, __FILE__);
+        ERR( "COUNT %ld\n", count);
+        ERR( "WORK AREA %p\n", work_area);
+
         if (type == XA_CARDINAL && format == 32 && count >= 4)
         {
             for (i = 0; i + 3 < count; i += 4)
@@ -308,6 +314,8 @@ RECT get_work_area(const RECT *monitor_rect)
         }
         XFree(work_area);
     }
+
+    ERR( "X11 get_work_area _GTK_WORKAREAS %d file %s\n", __LINE__, __FILE__);
 
     WARN("_GTK_WORKAREAS is not supported, fallback to _NET_WORKAREA. "
          "Work areas may be incorrect on multi-monitor systems.\n");

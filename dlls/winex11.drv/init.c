@@ -67,15 +67,22 @@ static X11DRV_PDEVICE *create_x11_physdev( Drawable drawable )
 {
     X11DRV_PDEVICE *physDev;
 
+    ERR("INIT create_x11_physdev START %d file %s\n", __LINE__, __FILE__);
+
     InitOnceExecuteOnce( &init_once, device_init, NULL, NULL );
 
     if (!(physDev = HeapAlloc( GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*physDev) ))) return NULL;
 
     physDev->drawable = drawable;
+    ERR("INIT create_x11_physdev before XCreateGC %d file %s\n", __LINE__, __FILE__);
     physDev->gc = XCreateGC( gdi_display, drawable, 0, NULL );
+    ERR("INIT create_x11_physdev after XCreateGC %d file %s\n", __LINE__, __FILE__);
     XSetGraphicsExposures( gdi_display, physDev->gc, False );
+    ERR("INIT create_x11_physdev after XSetGraphicsExposures %d file %s\n", __LINE__, __FILE__);
     XSetSubwindowMode( gdi_display, physDev->gc, IncludeInferiors );
+    ERR("INIT create_x11_physdev before XFlush %d file %s\n", __LINE__, __FILE__);
     XFlush( gdi_display );
+    ERR("INIT create_x11_physdev after XFlush %d file %s\n", __LINE__, __FILE__);
     return physDev;
 }
 
@@ -85,16 +92,26 @@ static X11DRV_PDEVICE *create_x11_physdev( Drawable drawable )
 static BOOL CDECL X11DRV_CreateDC( PHYSDEV *pdev, LPCWSTR driver, LPCWSTR device,
                                    LPCWSTR output, const DEVMODEW* initData )
 {
+    ERR("INIT X11DRV_CreateDC START %d file %s\n", __LINE__, __FILE__);
+
     X11DRV_PDEVICE *physDev = create_x11_physdev( root_window );
 
-    if (!physDev) return FALSE;
+    if (!physDev) {
+        ERR("INIT X11DRV_CreateDC END FALSE 1 %d file %s\n", __LINE__, __FILE__);
+        return FALSE;
+    }
 
     physDev->depth         = default_visual.depth;
     physDev->color_shifts  = &X11DRV_PALETTE_default_shifts;
     physDev->dc_rect       = get_virtual_screen_rect();
+    ERR("INIT X11DRV_CreateDC after get_virtual_screen_rect %d file %s\n", __LINE__, __FILE__);
     OffsetRect( &physDev->dc_rect, -physDev->dc_rect.left, -physDev->dc_rect.top );
     push_dc_driver( pdev, &physDev->dev, &x11drv_funcs );
-    if (xrender_funcs && !xrender_funcs->pCreateDC( pdev, driver, device, output, initData )) return FALSE;
+    if (xrender_funcs && !xrender_funcs->pCreateDC( pdev, driver, device, output, initData )) {
+        ERR("INIT X11DRV_CreateDC END FALSE 2 %d file %s\n", __LINE__, __FILE__);
+        return FALSE;
+    }
+    ERR("INIT X11DRV_CreateDC END TRUE %d file %s\n", __LINE__, __FILE__);
     return TRUE;
 }
 

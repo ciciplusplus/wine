@@ -245,6 +245,8 @@ static void update_x11_clipping( X11DRV_PDEVICE *physDev, HRGN rgn )
 {
     RGNDATA *data;
 
+    ERR( "X11 update_x11_clipping START %d file %s\n", __LINE__, __FILE__);
+
     if (!rgn)
     {
         XSetClipMask( gdi_display, physDev->gc, None );
@@ -255,6 +257,8 @@ static void update_x11_clipping( X11DRV_PDEVICE *physDev, HRGN rgn )
                             (XRectangle *)data->Buffer, data->rdh.nCount, YXBanded );
         HeapFree( GetProcessHeap(), 0, data );
     }
+
+    ERR( "X11 update_x11_clipping END %d file %s\n", __LINE__, __FILE__);
 }
 
 
@@ -274,9 +278,13 @@ BOOL add_extra_clipping_region( X11DRV_PDEVICE *dev, HRGN rgn )
         if (!(clip = CreateRectRgn( 0, 0, 0, 0 ))) return FALSE;
         CombineRgn( clip, dev->region, rgn, RGN_AND );
         update_x11_clipping( dev, clip );
+        ERR( "X11 add_extra_clipping_region after update_x11_clipping IF %d file %s\n", __LINE__, __FILE__);
         DeleteObject( clip );
     }
-    else update_x11_clipping( dev, rgn );
+    else {
+        update_x11_clipping( dev, rgn );
+        ERR( "X11 add_extra_clipping_region after update_x11_clipping ELSE %d file %s\n", __LINE__, __FILE__);
+    }
     return TRUE;
 }
 
@@ -287,6 +295,7 @@ BOOL add_extra_clipping_region( X11DRV_PDEVICE *dev, HRGN rgn )
 void restore_clipping_region( X11DRV_PDEVICE *dev )
 {
     update_x11_clipping( dev, dev->region );
+    ERR( "X11 restore_clipping_region after update_x11_clipping %d file %s\n", __LINE__, __FILE__);
 }
 
 
@@ -299,6 +308,7 @@ void CDECL X11DRV_SetDeviceClipping( PHYSDEV dev, HRGN rgn )
 
     physDev->region = rgn;
     update_x11_clipping( physDev, rgn );
+    ERR( "X11 X11DRV_SetDeviceClipping after update_x11_clipping %d file %s\n", __LINE__, __FILE__);
 }
 
 

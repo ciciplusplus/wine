@@ -56,7 +56,7 @@ static inline MONITORINFOEXW *get_primary(void)
 
 #ifdef SONAME_LIBXINERAMA
 
-#define MAKE_FUNCPTR(f) static typeof(f) * p##f
+#define MAKE_FUNCPTR(f) static typeof(f) * p##f = NULL
 
 MAKE_FUNCPTR(XineramaQueryExtension);
 MAKE_FUNCPTR(XineramaQueryScreens);
@@ -74,19 +74,35 @@ static void load_xinerama(void)
     if (!pXineramaQueryExtension) WARN( "XineramaQueryScreens not found\n" );
     pXineramaQueryScreens = dlsym( handle, "XineramaQueryScreens" );
     if (!pXineramaQueryScreens) WARN( "XineramaQueryScreens not found\n" );
+
+    ERR( "X11 load_xinerama LOAD %d file %s\n", __LINE__, __FILE__);
 }
 
 static int query_screens(void)
 {
+    return 0;
+
     int i, count, event_base, error_base;
     XineramaScreenInfo *screens;
+
+    ERR( "X11 query_screens START %d file %s\n", __LINE__, __FILE__);
 
     if (!monitors)  /* first time around */
         load_xinerama();
 
+    ERR( "X11 query_screens MONITORS %d file %s\n", __LINE__, __FILE__);
+
+    //pXineramaQueryExtension( gdi_display, &event_base, &error_base );
+    //ERR( "X11 query_screens pXineramaQueryExtension %d file %s\n", __LINE__, __FILE__);
+
     if (!pXineramaQueryExtension || !pXineramaQueryScreens ||
         !pXineramaQueryExtension( gdi_display, &event_base, &error_base ) ||
-        !(screens = pXineramaQueryScreens( gdi_display, &count ))) return 0;
+        !(screens = pXineramaQueryScreens( gdi_display, &count ))) {
+        ERR( "X11 query_screens XQUERY RETURN %d file %s\n", __LINE__, __FILE__);
+        return 0;
+    }
+
+    ERR( "X11 query_screens XQUERY %d file %s\n", __LINE__, __FILE__);
 
     if (monitors != &default_monitor) HeapFree( GetProcessHeap(), 0, monitors );
     if ((monitors = HeapAlloc( GetProcessHeap(), 0, count * sizeof(*monitors) )))
@@ -271,16 +287,27 @@ void xinerama_init( unsigned int width, unsigned int height )
     if (is_virtual_desktop())
         return;
 
+    ERR( "X11 xinerama_init WIDTH %d HEIGHT %d\n", width, height);
     SetRect( &rect, 0, 0, width, height );
+    ERR( "X11 xinerama_init SET RECT %d file %s\n", __LINE__, __FILE__);
     if (!query_screens())
     {
+        ERR( "X11 xinerama_init QUERY screens fail %d file %s\n", __LINE__, __FILE__);
+
         default_monitor.rcMonitor = rect;
         default_monitor.rcWork = get_work_area( &default_monitor.rcMonitor );
+
+        ERR( "X11 xinerama_init GET WORK AREA %d file %s\n", __LINE__, __FILE__);
+
         nb_monitors = 1;
         monitors = &default_monitor;
     }
 
+    ERR( "X11 xinerama_init QUERY %d file %s\n", __LINE__, __FILE__);
+
     primary = get_primary();
+
+    ERR( "X11 xinerama_init PRIMARY %d file %s\n", __LINE__, __FILE__);
 
     /* coordinates (0,0) have to point to the primary monitor origin */
     OffsetRect( &rect, -primary->rcMonitor.left, -primary->rcMonitor.top );
@@ -293,6 +320,8 @@ void xinerama_init( unsigned int width, unsigned int height )
                wine_dbgstr_rect(&monitors[i].rcWork),
                (monitors[i].dwFlags & MONITORINFOF_PRIMARY) ? " (primary)" : "" );
     }
+
+    ERR( "X11 xinerama_init nb_monitors %d file %s\n", __LINE__, __FILE__);
 
     handler.name = "Xinerama";
     handler.priority = 100;

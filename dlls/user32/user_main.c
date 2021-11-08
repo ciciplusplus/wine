@@ -322,6 +322,8 @@ static void winstation_init(void)
  */
 static BOOL process_attach(void)
 {
+    ERR("USER32 process_attach START %d file %s\n", __LINE__, __FILE__);
+
     dpiaware_init();
     winstation_init();
 
@@ -330,6 +332,8 @@ static BOOL process_attach(void)
 
     /* Setup palette function pointers */
     palette_init();
+
+    ERR("USER32 process_attach END %d file %s\n", __LINE__, __FILE__);
 
     return TRUE;
 }

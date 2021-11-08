@@ -895,6 +895,7 @@ static void initialize_display_settings(void)
     {
         if (!EnumDisplaySettingsExW( ddW.DeviceName, ENUM_CURRENT_SETTINGS, &dmW, 0))
         {
+            WINE_ERR("DBG %s %s\n", wine_dbgstr_w( ddW.DeviceName ), wine_dbgstr_w( ddW.DeviceString ));
             WINE_ERR( "Failed to query current display settings for %s.\n",
                       wine_dbgstr_w( ddW.DeviceName ) );
             continue;
