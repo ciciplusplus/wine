@@ -24,6 +24,7 @@
 # error You must include config.h to use this header
 #endif
 
+#undef SONAME_LIBXCOMPOSITE
 #ifdef SONAME_LIBXCOMPOSITE
 
 #include <X11/extensions/Xcomposite.h>

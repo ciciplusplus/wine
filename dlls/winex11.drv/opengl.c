@@ -1334,6 +1334,7 @@ static struct gl_drawable *create_gl_drawable( HWND hwnd, const struct wgl_pixel
             gl->drawable = pglXCreateWindow( gdi_display, gl->format->fbconfig, gl->window, NULL );
         TRACE( "%p created client %lx drawable %lx\n", hwnd, gl->window, gl->drawable );
     }
+#undef SONAME_LIBXCOMPOSITE
 #ifdef SONAME_LIBXCOMPOSITE
     else if(usexcomposite)
     {

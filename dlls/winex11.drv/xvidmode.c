@@ -47,6 +47,7 @@
 
 WINE_DEFAULT_DEBUG_CHANNEL(xvidmode);
 
+#undef SONAME_LIBXXF86VM
 #ifdef SONAME_LIBXXF86VM
 
 extern BOOL usexvidmode;

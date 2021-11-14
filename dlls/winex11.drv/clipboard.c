@@ -1957,6 +1957,7 @@ static BOOL wait_clipboard_mutex(void)
  *
  * Called when x11 clipboard content changes
  */
+#undef SONAME_LIBXFIXES
 #ifdef SONAME_LIBXFIXES
 static BOOL selection_notify_event( HWND hwnd, XEvent *event )
 {
@@ -1976,6 +1977,7 @@ static BOOL selection_notify_event( HWND hwnd, XEvent *event )
  */
 static void xfixes_init(void)
 {
+#undef SONAME_LIBXFIXES
 #ifdef SONAME_LIBXFIXES
     typeof(XFixesSelectSelectionInput) *pXFixesSelectSelectionInput;
     typeof(XFixesQueryExtension) *pXFixesQueryExtension;

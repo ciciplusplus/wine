@@ -54,6 +54,7 @@ static inline MONITORINFOEXW *get_primary(void)
     return &monitors[idx];
 }
 
+#undef SONAME_LIBXINERAMA
 #ifdef SONAME_LIBXINERAMA
 
 #define MAKE_FUNCPTR(f) static typeof(f) * p##f

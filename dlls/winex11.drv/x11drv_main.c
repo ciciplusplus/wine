@@ -442,6 +442,7 @@ static void setup_options(void)
     if (hkey) RegCloseKey( hkey );
 }
 
+#undef SONAME_LIBXCOMPOSITE
 #ifdef SONAME_LIBXCOMPOSITE
 
 #define MAKE_FUNCPTR(f) typeof(f) * p##f;
