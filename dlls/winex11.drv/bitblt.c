@@ -1570,6 +1570,7 @@ struct x11drv_window_surface
     COLORREF              color_key;
     HRGN                  region;
     void                 *bits;
+#undef HAVE_LIBXXSHM
 #ifdef HAVE_LIBXXSHM
     XShmSegmentInfo       shminfo;
 #endif
@@ -1771,6 +1772,7 @@ static void set_color_key( struct x11drv_window_surface *surface, COLORREF key )
                              get_color_component( GetBValue(key), masks[2] );
 }
 
+#undef HAVE_LIBXXSHM
 #ifdef HAVE_LIBXXSHM
 static int xshm_error_handler( Display *display, XErrorEvent *event, void *arg )
 {
@@ -1932,6 +1934,7 @@ static void CDECL x11drv_surface_flush( struct window_surface *window_surface )
                     ptr[x] |= surface->alpha_bits;
         }
 
+#undef HAVE_LIBXXSHM
 #ifdef HAVE_LIBXXSHM
         if (surface->shminfo.shmid != -1)
             XShmPutImage( gdi_display, surface->window, surface->gc, surface->image,
@@ -1966,6 +1969,7 @@ static void CDECL x11drv_surface_destroy( struct window_surface *window_surface 
     if (surface->image)
     {
         if (surface->image->data != surface->bits) HeapFree( GetProcessHeap(), 0, surface->bits );
+#undef HAVE_LIBXXSHM
 #ifdef HAVE_LIBXXSHM
         if (surface->shminfo.shmid != -1)
         {
@@ -2028,6 +2032,7 @@ struct window_surface *create_surface( Window window, const XVisualInfo *vis, co
     set_color_key( surface, color_key );
     reset_bounds( &surface->bounds );
 
+#undef HAVE_LIBXXSHM
 #ifdef HAVE_LIBXXSHM
     surface->image = create_shm_image( vis, width, height, &surface->shminfo );
     if (!surface->image)
