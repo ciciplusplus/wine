@@ -935,7 +935,7 @@ Window init_clip_window(void)
     if (!data->clip_window &&
         (data->clip_window = (Window)GetPropA( GetDesktopWindow(), clip_window_prop )))
     {
-        XSelectInput( data->display, data->clip_window, StructureNotifyMask );
+        //XSelectInput( data->display, data->clip_window, StructureNotifyMask );
     }
     return data->clip_window;
 }
