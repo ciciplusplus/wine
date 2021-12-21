@@ -29,6 +29,7 @@
 #include <X11/extensions/XInput2.h>
 #endif
 
+#undef SONAME_LIBXCURSOR
 #ifdef SONAME_LIBXCURSOR
 # include <X11/Xcursor/Xcursor.h>
 static void *xcursor_handle;
@@ -149,6 +150,7 @@ MAKE_FUNCPTR(XISelectEvents);
  */
 void X11DRV_Xcursor_Init(void)
 {
+#undef SONAME_LIBXCURSOR
 #ifdef SONAME_LIBXCURSOR
     xcursor_handle = dlopen(SONAME_LIBXCURSOR, RTLD_NOW);
     if (!xcursor_handle)
@@ -678,6 +680,7 @@ static void send_mouse_input( HWND hwnd, Window window, unsigned int state, INPU
     __wine_send_input( hwnd, input );
 }
 
+#undef SONAME_LIBXCURSOR
 #ifdef SONAME_LIBXCURSOR
 
 /***********************************************************************
@@ -1087,6 +1090,7 @@ static Cursor create_xcursor_system_cursor( const ICONINFOEXW *info )
 done:
     if (valueA[0])
     {
+#undef SONAME_LIBXCURSOR
 #ifdef SONAME_LIBXCURSOR
         if (pXcursorLibraryLoadCursor)
         {
@@ -1409,6 +1413,7 @@ static Cursor create_cursor( HANDLE handle )
 
     if (info.hbmColor)
     {
+#undef SONAME_LIBXCURSOR
 #ifdef SONAME_LIBXCURSOR
         if (pXcursorImagesLoadCursor)
             cursor = create_xcursor_cursor( hdc, &info, handle, bm.bmWidth, bm.bmHeight );

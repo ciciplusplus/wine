@@ -111,7 +111,7 @@ CRITICAL_SECTION wined3d_command_cs = {&wined3d_command_cs_debug, -1, 0, 0, 0, 0
 struct wined3d_settings wined3d_settings =
 {
     WINED3D_CSMT_ENABLE,     /* Multithreaded CS by default. */
-    MAKEDWORD_VERSION(4, 4), /* Default to OpenGL 4.4 */
+    MAKEDWORD_VERSION(2, 1), /* Default to OpenGL 2.1 */
     ORM_FBO,        /* Use FBOs to do offscreen rendering */
     PCI_VENDOR_NONE,/* PCI Vendor ID */
     PCI_DEVICE_NONE,/* PCI Device ID */

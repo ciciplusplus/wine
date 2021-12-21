@@ -725,6 +725,7 @@ static void set_size_hints( struct x11drv_win_data *data, DWORD style )
             size_hints->flags |= PMinSize | PMaxSize;
         }
     }
+    ERR("BEFORE XSetWMNormalHints\n");
     XSetWMNormalHints( data->display, data->whole_window, size_hints );
     XFree( size_hints );
 }

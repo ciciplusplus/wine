@@ -294,7 +294,7 @@ const char *winetest_elapsed(void)
 void winetest_subtest( const char* name )
 {
     struct tls_data *data = get_tls_data();
-    printf( "%s:%d:%s Subtest %s\n",
+    fprintf(stderr, "%s:%d:%s Subtest %s\n",
             data->current_file, data->current_line, winetest_elapsed(), name );
 }
 
@@ -315,7 +315,7 @@ static LONG winetest_add_line( void )
     index = data->current_line % ARRAY_SIZE(line_counters);
     count = InterlockedIncrement(line_counters + index) - 1;
     if (count == winetest_mute_threshold)
-        printf( "%s:%d:%s Line has been silenced after %d occurrences\n",
+        fprintf(stderr, "%s:%d:%s Line has been silenced after %d occurrences\n",
                 data->current_file, data->current_line, winetest_elapsed(),
                 winetest_mute_threshold );
 
@@ -340,7 +340,7 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
     {
         if (condition)
         {
-            printf( "%s:%d:%s Test succeeded inside todo block: ",
+            fprintf(stderr, "%s:%d:%s Test succeeded inside todo block: ",
                     data->current_file, data->current_line, winetest_elapsed() );
             vprintf(msg, args);
             InterlockedIncrement(&todo_failures);
@@ -353,7 +353,7 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
             {
                 if (winetest_debug > 0)
                 {
-                    printf( "%s:%d:%s Test marked todo: ",
+                    fprintf(stderr, "%s:%d:%s Test marked todo: ",
                             data->current_file, data->current_line, winetest_elapsed() );
                     vprintf(msg, args);
                 }
@@ -368,7 +368,7 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
     {
         if (!condition)
         {
-            printf( "%s:%d:%s Test failed: ",
+            fprintf(stderr, "%s:%d:%s Test failed: ",
                     data->current_file, data->current_line, winetest_elapsed() );
             vprintf(msg, args);
             InterlockedIncrement(&failures);
@@ -379,7 +379,7 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
             if (winetest_report_success ||
                 (winetest_time && GetTickCount() >= winetest_last_time + 1000))
             {
-                printf( "%s:%d:%s Test succeeded\n",
+                fprintf(stderr, "%s:%d:%s Test succeeded\n",
                         data->current_file, data->current_line, winetest_elapsed() );
             }
             InterlockedIncrement(&successes);
@@ -406,7 +406,7 @@ void __winetest_cdecl winetest_trace( const char *msg, ... )
     if (winetest_add_line() < winetest_mute_threshold)
     {
         struct tls_data *data = get_tls_data();
-        printf( "%s:%d:%s ", data->current_file, data->current_line, winetest_elapsed() );
+        fprintf(stderr, "%s:%d:%s ", data->current_file, data->current_line, winetest_elapsed() );
         __winetest_va_start(valist, msg);
         vprintf(msg, valist);
         __winetest_va_end(valist);
@@ -420,7 +420,7 @@ void winetest_vskip( const char *msg, __winetest_va_list args )
     if (winetest_add_line() < winetest_mute_threshold)
     {
         struct tls_data *data = get_tls_data();
-        printf( "%s:%d:%s Tests skipped: ", data->current_file, data->current_line, winetest_elapsed() );
+        fprintf(stderr, "%s:%d:%s Tests skipped: ", data->current_file, data->current_line, winetest_elapsed() );
         vprintf(msg, args);
         InterlockedIncrement(&skipped);
     }
@@ -506,14 +506,14 @@ void winetest_wait_child_process( HANDLE process )
         if (exit_code > 255)
         {
             DWORD pid = GetProcessId( process );
-            printf( "%s:%d:%s unhandled exception %08x in child process %04x\n",
+            fprintf(stderr, "%s:%d:%s unhandled exception %08x in child process %04x\n",
                     current_test->name, data->current_line, winetest_elapsed(),
                     exit_code, pid );
             InterlockedIncrement( &failures );
         }
         else if (exit_code)
         {
-            printf( "%s:%d:%s %u failures in child process\n",
+            fprintf(stderr, "%s:%d:%s %u failures in child process\n",
                     current_test->name, data->current_line, winetest_elapsed(),
                     exit_code );
             while (exit_code-- > 0)
@@ -547,9 +547,9 @@ static void list_tests(void)
 {
     const struct test *test;
 
-    printf( "Valid test names:\n" );
+    fprintf(stderr, "Valid test names:\n" );
     for (test = winetest_testlist; test->name; test++)
-        printf( "    %s\n", test->name );
+        fprintf(stderr, "    %s\n", test->name );
 }
 
 
@@ -561,7 +561,7 @@ static int run_test( const char *name )
 
     if (!(test = find_test( name )))
     {
-        printf( "Fatal: test '%s' does not exist.\n", name );
+        fprintf(stderr, "Fatal: test '%s' does not exist.\n", name );
         exit_process(1);
     }
     tls_index=TlsAlloc();
@@ -571,10 +571,10 @@ static int run_test( const char *name )
     if (winetest_debug)
     {
         if (muted_todo_successes || muted_skipped || muted_traces)
-            printf( "%04x:%s:%s Silenced %d todos, %d skips and %d traces.\n",
+            fprintf(stderr, "%04x:%s:%s Silenced %d todos, %d skips and %d traces.\n",
                     GetCurrentProcessId(), test->name, winetest_elapsed(),
                     muted_todo_successes, muted_skipped, muted_traces);
-        printf( "%04x:%s:%s %d tests executed (%d marked as todo, %d %s), %d skipped.\n",
+        fprintf(stderr, "%04x:%s:%s %d tests executed (%d marked as todo, %d %s), %d skipped.\n",
                 GetCurrentProcessId(), test->name, winetest_elapsed(),
                 successes + failures + todo_successes + todo_failures,
                 todo_successes, failures + todo_failures,
@@ -589,7 +589,7 @@ static int run_test( const char *name )
 /* Display usage and exit */
 static void usage( const char *argv0 )
 {
-    printf( "Usage: %s test_name\n\n", argv0 );
+    fprintf(stderr, "Usage: %s test_name\n\n", argv0 );
     list_tests();
     exit_process(1);
 }
@@ -600,9 +600,9 @@ static LONG CALLBACK exc_filter( EXCEPTION_POINTERS *ptrs )
     struct tls_data *data = get_tls_data();
 
     if (data->current_file)
-        printf( "%s:%d: this is the last test seen before the exception\n",
+        fprintf(stderr, "%s:%d: this is the last test seen before the exception\n",
                 data->current_file, data->current_line );
-    printf( "%04x:%s:%s unhandled exception %08x at %p\n",
+    fprintf(stderr, "%04x:%s:%s unhandled exception %08x at %p\n",
             GetCurrentProcessId(), current_test->name, winetest_elapsed(),
             ptrs->ExceptionRecord->ExceptionCode, ptrs->ExceptionRecord->ExceptionAddress );
     fflush( stdout );

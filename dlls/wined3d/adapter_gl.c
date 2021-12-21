@@ -5130,8 +5130,9 @@ static BOOL wined3d_adapter_gl_init(struct wined3d_adapter_gl *adapter_gl,
 {
     static const DWORD supported_gl_versions[] =
     {
-        MAKEDWORD_VERSION(4, 4),
-        MAKEDWORD_VERSION(3, 2),
+//        MAKEDWORD_VERSION(4, 4),
+//        MAKEDWORD_VERSION(3, 2),
+        MAKEDWORD_VERSION(2, 1),
         MAKEDWORD_VERSION(1, 0),
     };
     struct wined3d_driver_info *driver_info = &adapter_gl->a.driver_info;

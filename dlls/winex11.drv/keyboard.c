@@ -1109,9 +1109,9 @@ static WORD EVENT_event_to_vkey( XIC xic, XKeyEvent *e)
     char buf[24];
 
     /* Clients should pass only KeyPress events to XmbLookupString */
-    if (xic && e->type == KeyPress)
-        XmbLookupString(xic, e, buf, sizeof(buf), &keysym, &status);
-    else
+//    if (xic && e->type == KeyPress)
+//        XmbLookupString(xic, e, buf, sizeof(buf), &keysym, &status);
+//    else
         XLookupString(e, buf, sizeof(buf), &keysym, NULL);
 
     if ((e->state & NumLockMask) &&
@@ -1127,6 +1127,12 @@ static WORD EVENT_event_to_vkey( XIC xic, XKeyEvent *e)
         return VK_CANCEL;
 
     TRACE_(key)("e->keycode = %u\n", e->keycode);
+
+    if (e->keycode == 1073741885) {
+        return VK_F4;
+    } else if (e->keycode == 1073741884) {
+        return VK_F3;
+    }
 
     return keyc2vkey[e->keycode];
 }
@@ -1340,22 +1346,22 @@ BOOL X11DRV_KeyEvent( HWND hwnd, XEvent *xev )
     if (event->type == KeyPress) update_user_time( event->time );
 
     /* Clients should pass only KeyPress events to XmbLookupString */
-    if (xic && event->type == KeyPress)
-    {
-        ascii_chars = XmbLookupString(xic, event, buf, sizeof(buf), &keysym, &status);
-        TRACE_(key)("XmbLookupString needs %i byte(s)\n", ascii_chars);
-        if (status == XBufferOverflow)
-        {
-            Str = HeapAlloc(GetProcessHeap(), 0, ascii_chars);
-            if (Str == NULL)
-            {
-                ERR_(key)("Failed to allocate memory!\n");
-                return FALSE;
-            }
-            ascii_chars = XmbLookupString(xic, event, Str, ascii_chars, &keysym, &status);
-        }
-    }
-    else
+//    if (xic && event->type == KeyPress)
+//    {
+//        ascii_chars = XmbLookupString(xic, event, buf, sizeof(buf), &keysym, &status);
+//        TRACE_(key)("XmbLookupString needs %i byte(s)\n", ascii_chars);
+//        if (status == XBufferOverflow)
+//        {
+//            Str = HeapAlloc(GetProcessHeap(), 0, ascii_chars);
+//            if (Str == NULL)
+//            {
+//                ERR_(key)("Failed to allocate memory!\n");
+//                return FALSE;
+//            }
+//            ascii_chars = XmbLookupString(xic, event, Str, ascii_chars, &keysym, &status);
+//        }
+//    }
+//    else
         ascii_chars = XLookupString(event, buf, sizeof(buf), &keysym, NULL);
 
     TRACE_(key)("nbyte = %d, status %d\n", ascii_chars, status);
@@ -1398,7 +1404,14 @@ BOOL X11DRV_KeyEvent( HWND hwnd, XEvent *xev )
     vkey = EVENT_event_to_vkey(xic,event);
     /* X returns keycode 0 for composed characters */
     if (!vkey && ascii_chars) vkey = VK_NONAME;
-    bScan = keyc2scan[event->keycode] & 0xFF;
+    if (event->keycode == 1073741885) {
+        bScan = VK_F4 & 0xFF;
+    } else if (event->keycode == 1073741884) {
+        bScan = VK_F3 & 0xFF;
+    } else {
+        bScan = keyc2scan[event->keycode] & 0xFF;
+    }
+
 
     TRACE_(key)("keycode %u converted to vkey 0x%X scan %02x\n",
                 event->keycode, vkey, bScan);
@@ -2558,23 +2571,23 @@ INT CDECL X11DRV_ToUnicodeEx(UINT virtKey, UINT scanCode, const BYTE *lpKeyState
     /* Clients should pass only KeyPress events to XmbLookupString,
      * e.type was set to KeyPress above.
      */
-    if (xic)
-    {
-        ret = XmbLookupString(xic, &e, buf, sizeof(buf), &keysym, &status);
-        TRACE_(key)("XmbLookupString needs %d byte(s)\n", ret);
-        if (status == XBufferOverflow)
-        {
-            lpChar = HeapAlloc(GetProcessHeap(), 0, ret);
-            if (lpChar == NULL)
-            {
-                ERR_(key)("Failed to allocate memory!\n");
-                LeaveCriticalSection( &kbd_section );
-                return 0;
-            }
-            ret = XmbLookupString(xic, &e, lpChar, ret, &keysym, &status);
-        }
-    }
-    else
+//    if (xic)
+//    {
+//        ret = XmbLookupString(xic, &e, buf, sizeof(buf), &keysym, &status);
+//        TRACE_(key)("XmbLookupString needs %d byte(s)\n", ret);
+//        if (status == XBufferOverflow)
+//        {
+//            lpChar = HeapAlloc(GetProcessHeap(), 0, ret);
+//            if (lpChar == NULL)
+//            {
+//                ERR_(key)("Failed to allocate memory!\n");
+//                LeaveCriticalSection( &kbd_section );
+//                return 0;
+//            }
+//            ret = XmbLookupString(xic, &e, lpChar, ret, &keysym, &status);
+//        }
+//    }
+//    else
         ret = XLookupString(&e, buf, sizeof(buf), &keysym, NULL);
 
     TRACE_(key)("nbyte = %d, status 0x%x\n", ret, status);
