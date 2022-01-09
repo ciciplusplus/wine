@@ -948,6 +948,7 @@ void update_user_time( Time time )
 {
     if (!user_time_window)
     {
+        ERR("XCreateWindow (%d, %d) %dx%d %d in file %s\n", -1, -1, 1, 1, __LINE__, __FILE__);
         Window win = XCreateWindow( gdi_display, root_window, -1, -1, 1, 1, 0, CopyFromParent,
                                     InputOnly, CopyFromParent, 0, NULL );
         if (InterlockedCompareExchangePointer( (void **)&user_time_window, (void *)win, 0 ))
@@ -1458,6 +1459,7 @@ static Window get_dummy_parent(void)
         attrib.override_redirect = True;
         attrib.border_pixel = 0;
         attrib.colormap = default_colormap;
+        ERR("XCreateWindow (%d, %d) %dx%d %d in file %s\n", -1, -1, 1, 1, __LINE__, __FILE__);
         dummy_parent = XCreateWindow( gdi_display, root_window, -1, -1, 1, 1, 0, default_visual.depth,
                                       InputOutput, default_visual.visual,
                                       CWColormap | CWBorderPixel | CWOverrideRedirect, &attrib );
@@ -1511,6 +1513,7 @@ Window create_client_window( HWND hwnd, const XVisualInfo *visual )
     cx = min( max( 1, data->client_rect.right - data->client_rect.left ), 65535 );
     cy = min( max( 1, data->client_rect.bottom - data->client_rect.top ), 65535 );
 
+    ERR("XCreateWindow (%d, %d) %dx%d %d in file %s\n", x, y, cx, cy, __LINE__, __FILE__);
     ret = data->client_window = XCreateWindow( gdi_display,
                                                data->whole_window ? data->whole_window : dummy_parent,
                                                x, y, cx, cy, 0, default_visual.depth, InputOutput,
@@ -1569,6 +1572,7 @@ static void create_whole_window( struct x11drv_win_data *data )
     else if (cy > 65535) cy = 65535;
 
     pos = virtual_screen_to_root( data->whole_rect.left, data->whole_rect.top );
+    ERR("XCreateWindow (%d, %d) %dx%d %d in file %s\n", pos.x, pos.y, cx, cy, __LINE__, __FILE__);
     data->whole_window = XCreateWindow( data->display, root_window, pos.x, pos.y,
                                         cx, cy, 0, data->vis.depth, InputOutput,
                                         data->vis.visual, mask, &attr );
@@ -1877,6 +1881,7 @@ BOOL CDECL X11DRV_CreateWindow( HWND hwnd )
         /* create the cursor clipping window */
         attr.override_redirect = TRUE;
         attr.event_mask = StructureNotifyMask | FocusChangeMask;
+        ERR("XCreateWindow (%d, %d) %dx%d %d in file %s\n", 0, 0, 1, 1, __LINE__, __FILE__);
         data->clip_window = XCreateWindow( data->display, root_window, 0, 0, 1, 1, 0, 0,
                                            InputOnly, default_visual.visual,
                                            CWOverrideRedirect | CWEventMask, &attr );
